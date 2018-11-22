@@ -1,5 +1,5 @@
 {
-  "name": "React Boilerlate Lite",
+  "name": "JaaScript machine learning sandbox",
   "buildpacks": [
     { "url": "heroku/nodejs" }
   ]

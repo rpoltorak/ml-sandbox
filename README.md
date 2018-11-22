@@ -1,4 +1,4 @@
-# React Boilerlate Lite
+#JavaScript machine learning sandbox
 
 JavaScript machine learning sandbox
 

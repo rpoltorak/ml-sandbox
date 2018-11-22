@@ -1,13 +1,25 @@
-import data from "../data.json";
-
-const keys = Object.keys(data[0]);
-
 export function pick(obj, keys) {
   return Object.assign({}, ...keys.map(k => k in obj ? {[k]: obj[k]} : {}));
 }
 
-export function getData(length = data.length, fields = keys) {
-  return data
-    .slice(0, length)
-    .map(item => pick(item, fields));
+export function retrieveData(data, length, field, predictionLevel) {
+  const dataSet = data.map(item => item[field]);
+
+  if (length + predictionLevel > data.length) {
+    throw Error("Specified length is bigger than provided data");
+  }
+
+  let result = [];
+
+  for (let i = 0; i < length; i++) {
+    let row = [];
+
+    for (let j = predictionLevel; j >= 0; j--) {
+      row.push(dataSet[i + j])
+    }
+
+    result.push(row);
+  }
+
+  return result;
 }
