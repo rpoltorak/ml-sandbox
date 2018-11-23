@@ -3,10 +3,11 @@ import React from "react";
 
 import "./App.css";
 import LinearRegression from "../LinearRegression/LinearRegression";
+import LinearRegressionExternal from "../LinearRegressionExternal/LinearRegression";
 
 const App = () => (
   <div>
-    <LinearRegression />
+    <LinearRegressionExternal />
   </div>
 );
 
