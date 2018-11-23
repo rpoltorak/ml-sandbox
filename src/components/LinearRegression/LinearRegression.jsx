@@ -5,7 +5,12 @@ import math from "mathjs";
 import { retrieveData } from "../../services/utils.js";
 import data from "../../data/alior.json";
 
-console.log(data.length);
+// const getRandomIntFromInterval = (min, max) =>
+//   Math.floor(Math.random() * (max - min + 1) + min);
+
+// const data = allData.map(item => Object.assign({}, item, { open: getRandomIntFromInterval(30, 50) }));
+
+// console.log(data.length);
 
 function normalEquation(X, Y) {
   return math.eval(`inv(X' * X) * X' * Y`, { X, Y });
@@ -30,22 +35,30 @@ function LSMethod(X, Y) {
   ];
 }
 
-const SIZE = 230;
+const SIZE = 50;
 
 export default class LinearRegression extends Component {
   state = {
     a: 0,
     b: 0,
+    c: 0,
     chartData: []
   };
+
+  componentDidMount() {
+    this.calculateParamsNE();
+  }
 
   calculateParamsNE = () => {
     const matrix = retrieveData(data, SIZE, "open", 2);
 
     console.log("matrix", matrix);
 
-    // Fisher observation matrix
-    let F = math.eval('matrix[:, 2:3]', {
+    let XA = math.eval('matrix[:, 2]', {
+      matrix,
+    });
+
+    let XB = math.eval('matrix[:, 3]', {
       matrix,
     });
 
@@ -54,11 +67,13 @@ export default class LinearRegression extends Component {
       matrix,
     });
 
-    // F = math.concat(math.ones([matrix.length, 1]).valueOf(), F);
+    let F = math.concat(math.square(XA), XB, math.ones([matrix.length, 1]).valueOf());
 
     // Parameters vector
     const V = normalEquation(F, Y);
     const params = math.squeeze(V);
+
+    console.log("F", F);
 
     console.log("params", params);
 
@@ -67,11 +82,12 @@ export default class LinearRegression extends Component {
     this.setState(state => ({
       chartData,
       a: params[0],
-      b: params[1]
+      b: params[1],
+      c: params[2],
     }));
   }
 
-  calculateParamsLS = () => {
+  calculateParamsLS = (levels) => {
     const matrix = retrieveData(data, SIZE, "open", 2);
 
     let X = math.squeeze(math.eval('matrix[:, 2]', {
@@ -98,34 +114,32 @@ export default class LinearRegression extends Component {
     }));
   }
 
-  componentDidMount() {
-    this.calculateParamsNE();
-  }
-
   hypothesis = x => {
-    const { a, b } = this.state;
+    const { a, b, c } = this.state;
 
     // Simple linear function
-    return a * x + b;
+    return a * math.pow(x, 2) + b * x + c;
   };
 
   render() {
     const a = math.format(this.state.a, { precision: 3 });
     const b = math.format(this.state.b, { precision: 3 });
+    const c = math.format(this.state.c, { precision: 3 });
 
-    const data = this.state.chartData.map(({ x, y }) => ({ x, y, h: this.hypothesis(x) }));
+    const data = this.state.chartData.map(({ x, y }) => ({ x, y, f: this.hypothesis(x) }));
+
+    console.log(data);
 
     return (
       <div>
         <div>
-          f(x) = {a}x + {b}
+          f(x) = {a}x^2 + {b}x + {c}
         </div>
         <ComposedChart width={1000} height={600} data={data}>
-          <XAxis />
-          <YAxis />
+          <XAxis domain={[0, "maxData"]} />
+          <YAxis domain={[0, "maxData"]}/>
           <Line type="monotone" dataKey="y" stroke="transparent" dot={{ stroke: "red", strokeWidth: 0, fill: "#8884d8" }} />
-          <Line type="monotone" dataKey="h" stroke="#82ca9d" dot={false} />
-          {/* <Scatter shape="circle" fill="blue" /> */}
+          <Line type="monotone" dataKey="f" stroke="#82ca9d" dot={false} />
         </ComposedChart>
       </div>
     );
