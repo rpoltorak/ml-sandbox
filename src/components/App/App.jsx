@@ -3,11 +3,14 @@ import React from "react";
 
 import "./App.css";
 import LinearRegression from "../LinearRegression/LinearRegression";
-import LinearRegressionExternal from "../LinearRegressionExternal/LinearRegression";
+import ExtLinearRegression from "../ExtLinearRegression/ExtLinearRegression";
+import PolynomialRegression from "../PolynomialRegression/PolynomialRegression";
 
 const App = () => (
   <div>
-    <LinearRegressionExternal />
+    <LinearRegression />
+    {/* <ExtLinearRegression /> */}
+    {/* <PolynomialRegression /> */}
   </div>
 );
 

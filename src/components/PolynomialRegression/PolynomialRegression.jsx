@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { ComposedChart, XAxis, YAxis, Scatter, Line } from "recharts";
+import { ComposedChart, XAxis, YAxis, Line } from "recharts";
 import math from "mathjs";
 
 import { retrieveData } from "../../services/utils.js";
-import wigData from "../../data/wig.json";
-import companyData from "../../data/alior.json";
+import data from "../../data/alior.json";
 
 function normalEquation(X, Y) {
   return math.eval(`inv(X' * X) * X' * Y`, { X, Y });
@@ -29,9 +28,9 @@ function LeastSquare(X, Y) {
   ];
 }
 
-const SIZE = 50;
+const SIZE = 20;
 
-export default class LinearRegressionExternal extends Component {
+export default class PolynomialRegression extends Component {
   state = {
     a: 0,
     b: 0,
@@ -45,13 +44,15 @@ export default class LinearRegressionExternal extends Component {
   }
 
   calculateParamsNE = () => {
-    const companyMatrix = retrieveData(companyData, SIZE, "open", 1);
-    const wigMatrix = retrieveData(wigData, SIZE, "open", 0);
-    const matrix = math.concat(companyMatrix, wigMatrix);
+    const matrix = retrieveData(data, SIZE, "open", 2);
 
     console.log("matrix", matrix);
 
-    let X = math.eval('matrix[:, 2]', {
+    let XA = math.eval('matrix[:, 2]', {
+      matrix,
+    });
+
+    let XB = math.eval('matrix[:, 3]', {
       matrix,
     });
 
@@ -60,12 +61,7 @@ export default class LinearRegressionExternal extends Component {
       matrix,
     });
 
-    let P = math.eval('matrix[:, 3]', {
-      matrix,
-    });
-
-    // let F = math.concat(math.square(XA), XB, math.ones([matrix.length, 1]).valueOf());
-    let F = math.concat(math.square(X), P, math.ones([matrix.length, 1]).valueOf());
+    let F = math.concat(math.square(XA), XB, math.ones([matrix.length, 1]).valueOf());
 
     // Parameters vector
     const V = normalEquation(F, Y);
@@ -87,7 +83,7 @@ export default class LinearRegressionExternal extends Component {
   }
 
   calculateParamsLS = () => {
-    const matrix = retrieveData(companyData, SIZE, "open", 2);
+    const matrix = retrieveData(data, SIZE, "open", 2);
 
     let X = math.squeeze(math.eval('matrix[:, 2]', {
       matrix,
