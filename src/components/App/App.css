@@ -2,3 +2,7 @@ td, th {
   text-align: right;
   padding: 5px;
 }
+
+button {
+  margin-bottom: 10px;
+}

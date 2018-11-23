@@ -151,6 +151,8 @@ export default class ExtLinearRegression extends Component {
         <div>
           f(x) = {a}x + {b}
         </div>
+        <div>Mean squared error MSE: {squaredErrorSum / data.length}</div>
+        <div>Forecast error: {forecastErrorSum / data.length}</div>
         <ComposedChart width={1000} height={600} data={data}>
           <XAxis domain={[0, "maxData"]} />
           <YAxis domain={[0, "maxData"]}/>

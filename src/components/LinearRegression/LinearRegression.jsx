@@ -28,7 +28,7 @@ function LeastSquare(X, Y) {
   ];
 }
 
-const SIZE = 50;
+const SIZE = 20;
 
 export default class LinearRegression extends Component {
   state = {
@@ -99,7 +99,7 @@ export default class LinearRegression extends Component {
 
     this.setState(state => ({
       matrix,
-      chartData,
+      chartData: chartData.map(({ x, y }) => ({ x, y, p: this.hypothesis(x) })),
       a: params[0],
       b: params[1]
     }));
@@ -113,10 +113,6 @@ export default class LinearRegression extends Component {
   };
 
   render() {
-    if (!this.state.a || !this.state.b) {
-      return null;
-    }
-
     const a = math.format(this.state.a, { precision: 3 });
     const b = math.format(this.state.b, { precision: 3 });
 
@@ -140,13 +136,15 @@ export default class LinearRegression extends Component {
     console.log("Mean squared error MSE:", squaredErrorSum / data.length);
     console.log("Forecast error:", forecastErrorSum / data.length);
 
-    console.log(this.state.matrix);
+    console.log(data);
 
     return (
       <div>
         <div>
           f(x) = {a}x + {b}
         </div>
+        <div>Mean squared error MSE: {squaredErrorSum / data.length}</div>
+        <div>Forecast error: {forecastErrorSum / data.length}</div>
         <ComposedChart width={1000} height={600} data={data}>
           <XAxis domain={[0, "maxData"]} />
           <YAxis domain={[0, "maxData"]}/>
