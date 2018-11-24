@@ -211,32 +211,21 @@ export default class NeuralNetwork extends Component {
 
     const data = this.state.chartData.map(({ x, y }) => ({ x, y, p: this.hypothesis(x) }));
 
-    let forecastErrorSum = 0;
-    let ySum = 0;
+    let meanSquaredError = 0;
 
     for (let i = 0; i < data.length - 1; i++) {
-      ySum += data[i].y
-      forecastErrorSum += data[i+1].y - data[i].p;
+      meanSquaredError += math.square(data[i+1].y - data[i].p);
     }
 
-    let yMean = ySum / data.length;
-    let squaredErrorSum = 0;
-
-    for (let i = 0; i < data.length - 1; i++) {
-      squaredErrorSum += math.square(data[i].y - yMean);
-    }
-
-    console.log("Mean squared error MSE:", squaredErrorSum / data.length);
-    console.log("Forecast error:", forecastErrorSum / data.length);
+    console.log("Mean squared error MSE:", meanSquaredError / data.length);
 
     console.log(data);
 
     return (
       <div>
         <div>epochs: {this.state.epochs}</div>
-        <div>cost: {this.state.cost}</div>
-        <div>Mean squared error MSE: {squaredErrorSum / data.length}</div>
-        <div>Forecast error: {forecastErrorSum / data.length}</div>
+        {/* <div>cost: {this.state.cost}</div> */}
+        <div>Mean squared error MSE:: {meanSquaredError / data.length}</div>
         <div>
           f(x) = {a}x + {b}
         </div>

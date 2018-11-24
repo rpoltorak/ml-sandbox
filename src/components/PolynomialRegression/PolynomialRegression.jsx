@@ -123,23 +123,13 @@ export default class PolynomialRegression extends Component {
 
     const data = this.state.chartData.map(({ x, y }) => ({ x, y, p: this.hypothesis(x) }));
 
-    let forecastErrorSum = 0;
-    let ySum = 0;
+    let meanSquaredError = 0;
 
     for (let i = 0; i < data.length - 1; i++) {
-      ySum += data[i].y
-      forecastErrorSum += data[i+1].y - data[i].p;
+      meanSquaredError += math.square(data[i+1].y - data[i].p);
     }
 
-    let yMean = ySum / data.length;
-    let squaredErrorSum = 0;
-
-    for (let i = 0; i < data.length - 1; i++) {
-      squaredErrorSum += math.square(data[i].y - yMean);
-    }
-
-    console.log("Mean squared error MSE:", squaredErrorSum / data.length);
-    console.log("Forecast error:", forecastErrorSum / data.length);
+    console.log("Mean squared error MSE:", meanSquaredError / data.length);
 
     console.log(data);
 
@@ -148,8 +138,7 @@ export default class PolynomialRegression extends Component {
         <div>
           f(x) = {a}x^2 + {b}x + {c}
         </div>
-        <div>Mean squared error MSE: {squaredErrorSum / data.length}</div>
-        <div>Forecast error: {forecastErrorSum / data.length}</div>
+        <div>Mean squared error MSE: {meanSquaredError / data.length}</div>
         <ComposedChart width={1000} height={600} data={data}>
           <XAxis domain={[0, "maxData"]} />
           <YAxis domain={[0, "maxData"]}/>
