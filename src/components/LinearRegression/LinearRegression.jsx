@@ -34,6 +34,7 @@ export default class LinearRegression extends Component {
   state = {
     a: 0,
     b: 0,
+    c: 0,
     chartData: [],
     matrix: []
   };
@@ -44,11 +45,11 @@ export default class LinearRegression extends Component {
   }
 
   calculateParamsNE = () => {
-    const matrix = retrieveData(data, SIZE, "open", 1);
+    const matrix = retrieveData(data, SIZE, "open", 2);
 
     console.log("matrix", matrix);
 
-    let X = math.eval('matrix[:, 2]', {
+    let X = math.eval('matrix[:, 2:3]', {
       matrix,
     });
 
@@ -74,6 +75,7 @@ export default class LinearRegression extends Component {
       chartData,
       a: params[0],
       b: params[1],
+      c: params[2]
     }));
   }
 
@@ -106,20 +108,20 @@ export default class LinearRegression extends Component {
   }
 
   hypothesis = x => {
-    const { a, b } = this.state;
+    const { a, b, c } = this.state;
 
     // Simple linear function
-    return (a * x) + b;
+    return (a * x) + (b * x) + c;
   };
 
   render() {
     const a = math.format(this.state.a, { precision: 3 });
     const b = math.format(this.state.b, { precision: 3 });
+    const c = math.format(this.state.c, { precision: 3 });
 
     const data = this.state.chartData.map(({ x, y }) => ({ x, y, p: this.hypothesis(x) }));
 
     let meanSquaredError = 0;
-
     for (let i = 0; i < data.length - 1; i++) {
       meanSquaredError += math.square(data[i+1].y - data[i].p);
     }
@@ -131,7 +133,7 @@ export default class LinearRegression extends Component {
     return (
       <div>
         <div>
-          f(x) = {a}x + {b}
+          f(x) = {a}x + {b}x + {c}
         </div>
         <div>Mean squared error MSE: {meanSquaredError / data.length}</div>
         <ComposedChart width={1000} height={600} data={data}>
@@ -146,6 +148,7 @@ export default class LinearRegression extends Component {
               <tr>
                 <th>y</th>
                 <th>y-1</th>
+                <th>y-2</th>
               </tr>
             </thead>
             <tbody>

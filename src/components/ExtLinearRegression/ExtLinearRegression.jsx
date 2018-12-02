@@ -82,6 +82,7 @@ export default class ExtLinearRegression extends Component {
       chartData,
       a: params[0],
       b: params[1],
+      c: params[2],
     }));
   }
 
@@ -109,20 +110,22 @@ export default class ExtLinearRegression extends Component {
       matrix,
       chartData,
       a: params[0],
-      b: params[1]
+      b: params[1],
+      c: params[2]
     }));
   }
 
   hypothesis = x => {
-    const { a, b } = this.state;
+    const { a, b, c } = this.state;
 
     // Simple linear function
-    return (a * x) + b;
+    return (a * x) + (b * x) + c;
   };
 
   render() {
     const a = math.format(this.state.a, { precision: 3 });
     const b = math.format(this.state.b, { precision: 3 });
+    const c = math.format(this.state.c, { precision: 3 });
 
     const data = this.state.chartData.map(({ x, y }) => ({ x, y, p: this.hypothesis(x) }));
 
@@ -139,7 +142,7 @@ export default class ExtLinearRegression extends Component {
     return (
       <div>
         <div>
-          f(x) = {a}x + {b}
+          f(x) = {a}x + {b}x + {c}
         </div>
         <div>Mean squared error MSE: {meanSquaredError / data.length}</div>
         <ComposedChart width={1000} height={600} data={data}>
